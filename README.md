@@ -17,3 +17,7 @@ This app will:
 - work in Chrome, Firefox, Safari, Edge, and Internet Explorer 11
 - show loading indicators while loading data
 - handle errors (such as trying to load data while offline) and show user-friendly error messages
+
+## Review
+
+App can be viewed at: https://smeyer012.github.io/simple-js-app/index.html
