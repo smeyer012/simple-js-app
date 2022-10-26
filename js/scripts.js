@@ -66,21 +66,10 @@ let currencyRepository = (function() {
 })();
 
 // tests functions
-currencyRepository.add({ name: 'Japanese Yen', code: 'JPY', symbol: '\u00A5' });
+currencyRepository.add({ name: 'Japanese Yen', code: 'JPY', symbol: '\u00A5' }); // will be added
+currencyRepository.add({ name: 'something', color: 'red', size: 10 }); // will not pass checkCurrencyKeys
 console.log(currencyRepository.getAll());
 
-
-// saves currency types as objects within the currencyList array
-
-// loops through list of currency and writes name and symbol into a list item
-// for (let i=0; i<currencyList.length; i++) {
-//   document.write('<li>' + currencyList[i].name + ' (' + currencyList[i].symbol + ')');
-//   // displays text for European currency
-//   if (currencyList[i].code === 'EUR') {
-//     document.write(' - How European!');
-//   }
-//   document.write('</li>');
-// }
 
 // loops through each object in the currency array and writes the currency name and symbol into a list item
 let allCurrencies = currencyRepository.getAll();
