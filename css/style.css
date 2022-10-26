@@ -50,6 +50,7 @@ button.currency_button {
   transition: opacity 0.5s linear;
 }
 
+/* This is a bit of CSS trickery to enable a transition for a gradient background */
 button.currency_button::before {
   position: absolute;
   content: "";
