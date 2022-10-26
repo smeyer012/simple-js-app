@@ -9,11 +9,18 @@
   </head>
   <body>
     <main>
-      <h1>Available Currencies</h1>
-      <ul>
-        <!-- displays currencies as list items -->
-        <script src="js/scripts.js"></script>
-      </ul>
+      <div class="box">
+        <h1>Available Currencies</h1>
+        <ul id="currencies">
+        </ul>
+      </div>
+      <div class="box">
+        <p>Get currencies with exchange rate less than the Euro (base rate of 1):</p>
+        <button id="searchbutton">Search</button>
+        <ul id="searchResultList">
+        </ul>
+      </div>
     </main>
+    <script src="js/scripts.js"></script>
   </body>
 </html>

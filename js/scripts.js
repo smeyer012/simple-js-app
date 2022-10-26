@@ -2,9 +2,9 @@ let currencyRepository = (function() {
 
   // sets up array of currency objects
   let currencyList = [
-    {name: 'United States Dollar', code: 'USD', symbol: '\u0024' },
-    {name: 'Euro', code: 'EUR', symbol: '\u20AC' },
-    {name: 'British Pound Sterling', code: 'GPB', symbol: '\u00A3' }
+    {name: 'United States Dollar', code: 'USD', symbol: '\u0024', rate: 0.9673 },
+    {name: 'Euro', code: 'EUR', symbol: '\u20AC', rate: 1 },
+    {name: 'British Pound Sterling', code: 'GPB', symbol: '\u00A3', rate: 0.6088 }
   ];
 
   // creates function to add a currency object to the array
@@ -57,27 +57,63 @@ let currencyRepository = (function() {
     return currencyList;
   }
 
-  // returns functions as key-value pairs
+  // creates search function that filters the currency array objects by exchange rate
+  function searchList(button) {
+
+    // sets up HTML element to display the results within
+    let searchlist = document.getElementById("searchResultList");
+
+    // filter function
+    let searchResults = currencyList.filter(function (currency) {
+      if (currency.rate < 1) {
+        return true;
+      }
+      return false;
+    });
+
+    // adds results of filter to an unordered list
+    let currencyListInner = '';
+    searchResults.forEach(function (searchArrayItem) {
+      currencyListInner = currencyListInner + '<li>' + searchArrayItem.name + ' - rate: ' + searchArrayItem.rate + '</li>';
+    });
+    searchlist.innerHTML = currencyListInner;
+
+    // hides search button once clicked
+    button.style.display = 'none';
+
+  }
+
+  // creates keys that allow the functions to be accessible outside of the scope of this function's state
   return {
     add: add,
-    getAll: getAll
+    getAll: getAll,
+    searchList: searchList
   };
 
 })();
 
-// tests functions
-currencyRepository.add({ name: 'Japanese Yen', code: 'JPY', symbol: '\u00A5' }); // will be added
-currencyRepository.add({ name: 'something', color: 'red', size: 10 }); // will not pass checkCurrencyKeys
+// tests add function
+currencyRepository.add({ name: 'Japanese Yen', code: 'JPY', symbol: '\u00A5', rate: 101.71 }); // will be added
+currencyRepository.add({ name: 'something', color: 'red', size: 10, function: 'task' }); // will not pass checkCurrencyKeys
 console.log(currencyRepository.getAll());
 
-
-// loops through each object in the currency array and writes the currency name and symbol into a list item
+// assigns array of currency objects to allCurrencies variable
 let allCurrencies = currencyRepository.getAll();
+
+// adds available currencies to an unordered list
+let currencies = document.getElementById("currencies");
+let currenciesInner = "";
 allCurrencies.forEach(function(currency) {
-  document.write('<li>' + currency.name + ' (' + currency.symbol + ')');
-  // displays text for European currency
+  let nameTag = '';
   if (currency.code === 'EUR') {
-    document.write(' - How European!');
+    nameTag = ' - How European!';
   }
-  document.write('</li>');
+  currenciesInner = currenciesInner + '<li>' + currency.name + ' (' + currency.symbol + ')' + nameTag + '</li>';
+});
+currencies.innerHTML = currenciesInner;
+
+// executes search function on click of searchbutton
+let searchbutton = document.getElementById("searchbutton");
+searchbutton.addEventListener("click", function() {
+  currencyRepository.searchList(searchbutton);
 });
