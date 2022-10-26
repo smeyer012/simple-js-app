@@ -9,7 +9,11 @@ let currencyRepository = (function() {
 
   // creates function to add a currency object to the array
   function add(currency) {
-    currencyList.push(currency);
+    // checks that new entry is an object
+    if (typeof currency === "object") {
+      // adds new object to currencyList array
+      currencyList.push(currency);
+    }
   }
 
   // creates function to return all objects in array
