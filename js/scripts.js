@@ -16,6 +16,16 @@ let currencyRepository = (function() {
     }
   }
 
+  // adds new object entry to unordered list
+  function addListItem(newCurrency) {
+    let listItem = document.createElement('li');
+    let button = document.createElement('button');
+    button.innerText = newCurrency.name;
+    button.classList.add('currency_button');
+    listItem.appendChild(button);
+    currencies.appendChild(listItem);
+  }
+
   // checks if new currency object's keys match currencyList
   function checkCurrencyKeys(currency, currencyList) {
     //gets existing and new object array entries
@@ -86,6 +96,7 @@ let currencyRepository = (function() {
   // creates keys that allow the functions to be accessible outside of the scope of this function's state
   return {
     add: add,
+    addListItem: addListItem,
     getAll: getAll,
     searchList: searchList
   };
@@ -100,17 +111,13 @@ console.log(currencyRepository.getAll());
 // assigns array of currency objects to allCurrencies variable
 let allCurrencies = currencyRepository.getAll();
 
-// adds available currencies to an unordered list
-let currencies = document.getElementById("currencies");
-let currenciesInner = "";
+// sets up HTML element to display the currency list within
+let currencies = document.querySelector("#currencies");
+
+// loops through all available currencies and adds them to an unordered list
 allCurrencies.forEach(function(currency) {
-  let nameTag = '';
-  if (currency.code === 'EUR') {
-    nameTag = ' - How European!';
-  }
-  currenciesInner = currenciesInner + '<li>' + currency.name + ' (' + currency.symbol + ')' + nameTag + '</li>';
+  currencyRepository.addListItem(currency);
 });
-currencies.innerHTML = currenciesInner;
 
 // executes search function on click of searchbutton
 let searchbutton = document.getElementById("searchbutton");
