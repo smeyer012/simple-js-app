@@ -17,13 +17,29 @@ let currencyRepository = (function() {
   }
 
   // adds new object entry to unordered list
-  function addListItem(newCurrency) {
+  function addListItem(currency) {
     let listItem = document.createElement('li');
     let button = document.createElement('button');
-    button.innerText = newCurrency.name;
+    button.innerText = currency.name;
     button.classList.add('currency_button');
+    addEvL(button, 'click', showDetails, currency)
+    // button.addEventListener("click", function() {
+    //   showDetails(currency);
+    // });
     listItem.appendChild(button);
     currencies.appendChild(listItem);
+  }
+
+  // toggles display of currency information
+  function showDetails(currency) {
+    console.log(currency);
+  }
+
+  // function to add addEventListener
+  function addEvL(element, event='click', function_name, parameter) {
+    element.addEventListener(event, function() {
+      function_name(parameter);
+    });
   }
 
   // checks if new currency object's keys match currencyList
