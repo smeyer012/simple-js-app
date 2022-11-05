@@ -48,33 +48,12 @@ let currencyRepository = (function() {
     let newObjKeys = Object.keys(currency);
     let currObjKeys = Object.keys(currencyList);
 
-    //sets up utilitarian variables
-    let keyMatch = [];
-    let i = 0;
-
-    //first test that the new object has the same number of keys
-    if (newObjKeys.length === currObjKeys.length) {
-      //loops through existing keys
-      currObjKeys.forEach(function(key) {
-        //checks if new object has each key and creates an array of true/false
-        if(newObjKeys.includes(key)) {
-          keyMatch[i] = true;
-        }
-        else {
-          keyMatch[i] = false;
-        }
-        i++;
-      });
-      //checks array for a false match
-      if(!keyMatch.includes(false)) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-    else{
-      return false;
-    }
+    /* loops through each key of an existing object and checks that 
+    the new object has the key -- will return false at the first 
+    instance of a mismatch */
+    return currObjKeys.every((key) => {
+      return newObjKeys.includes(key);
+    });
 
   }
 
