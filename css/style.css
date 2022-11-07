@@ -125,6 +125,7 @@ button.currency_button:hover::before {
 
 .modal h1 {
   margin-top: 0;
+  padding: 20px 60px 0;
   position: relative;
   z-index: 1;
 }

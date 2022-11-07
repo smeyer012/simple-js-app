@@ -13,11 +13,14 @@ let currencyRepository = (function() {
   ];
   let apiUrl = 'https://api.vatcomply.com/rates';
 
+  // gets currency name and exchange rate from Vat API
   function loadList() {
     return fetch(apiUrl).then(function (response) {
-      return response.json();
+      return response.json(); // gets promise
     }).then(function (json) {
-      let obj = json.rates;
+      let obj = json.rates; // gets data
+      /* loops through object with all currencies and assigns the 
+      key/value pairs to individual objects to be added to an array */
       for (const property in obj) {
         let currency = {
           name: property,
@@ -42,7 +45,7 @@ let currencyRepository = (function() {
   // sets up HTML element to display the currency list within
   let currencies = document.querySelector("#currencies");
 
-  // adds new object entry to unordered list
+  // adds new currency name to unordered list and makes it a button to show details
   function addListItem(currency) {
     let listItem = document.createElement('li');
     let button = document.createElement('button');
@@ -83,6 +86,8 @@ let currencyRepository = (function() {
     return currencyList;
   }
 
+  /* gets currency data from the REST Countries API and creates an array of 
+  countries that utilize the particular currency */
   function loadDetails(currencyName) {
     let url = "https://restcountries.com/v3.1/currency/" + currencyName;
     return fetch(url).then(function (response) {
@@ -92,23 +97,22 @@ let currencyRepository = (function() {
       for (i = 0; i<details.length; i++) {
         countryList.push(details[i].name.common);
       }
-      // let currencyTitle = details[0].currencies.details[0][currencyName].name;
-      // let currencySymbol = details[0].currencies.details[0][currencyName].symbol;
-      return countryList;
-      // Now we add the details to the item
-      // item.imageUrl = details.sprites.front_default;
-      // item.height = details.height;
-      // item.types = details.types;
+      let currencyData = {
+        currencyCountries: countryList,
+        currencyTitle: details[0].currencies['' + currencyName + ''].name,
+        currencySymbol: details[0].currencies['' + currencyName + ''].symbol
+      }
+      return currencyData;
 
     }).catch(function (e) {
       console.error(e);
     });
   }
 
-  // toggles display of pokemon information
+  // accesses currency data and calls modal function with dynamic content
   function showDetails(currencyName) {
-    loadDetails(currencyName).then(function (countryList) {
-      modalFunctions.showModal('Countries that use ' + currencyName + ' as their currency', countryList);
+    loadDetails(currencyName).then(function (currencyData) {
+      modalFunctions.showModal('These are the countries that use the ' + currencyData.currencyTitle + ' (notation: ' + currencyData.currencySymbol + ') as their currency:', currencyData.currencyCountries);
     });
   }
 
@@ -152,9 +156,9 @@ let currencyRepository = (function() {
 // assigns array of currency objects to allCurrencies variable
 let allCurrencies = currencyRepository.getAll();
 
+// loops through all available currencies and adds them to an unordered list
 currencyRepository.loadList().then(function() {
   // Now the data is loaded! 
-  // loops through all available currencies and adds them to an unordered list
   allCurrencies.forEach(function(currency){
     currencyRepository.addListItem(currency);
   });
@@ -173,6 +177,7 @@ let modalFunctions = (function() {
   
   let modalContainer = document.querySelector('#modal-container');
   
+  // builds content dynamically for modal
   function showModal(title, text) {
     modalContainer.innerHTML = '';
     let modal = document.createElement('div');
@@ -181,13 +186,13 @@ let modalFunctions = (function() {
     let closeButtonElement = document.createElement('button');
     closeButtonElement.classList.add('modal-close');
     closeButtonElement.innerText = 'Close';
+    //hides modal if 'Close' link is clicked
     closeButtonElement.addEventListener('click', hideModal);
 
     let titleElement = document.createElement('h1');
     titleElement.innerText = title;
 
     let contentElement = document.createElement('ul');
-    let allCountries = "";
     for (i=0; i<text.length; i++) {
       let listItem = document.createElement('li');
       listItem.innerText = text[i];
@@ -202,16 +207,19 @@ let modalFunctions = (function() {
     modalContainer.classList.add('is-visible');
   }
 
+  // function to hide modal
   function hideModal() {
     modalContainer.classList.remove('is-visible');
   }
 
+  // hides modal if esc is pressed
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && modalContainer.classList.contains('is-visible')) {
       hideModal();  
     }
   });
   
+  // hides modal if user clicks outside of the modal window
   modalContainer.addEventListener('click', (e) => {
     // Since this is also triggered when clicking INSIDE the modal
     // We only want to close if the user clicks directly on the overlay
