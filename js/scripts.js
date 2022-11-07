@@ -48,17 +48,12 @@ let currencyRepository = (function() {
     let button = document.createElement('button');
     button.innerText = currency.name;
     button.classList.add('currency_button');
-    addEvL(button, 'click', showDetails, currency)
+    addEvL(button, 'click', showDetails, currency.name)
     // button.addEventListener("click", function() {
     //   showDetails(currency);
     // });
     listItem.appendChild(button);
     currencies.appendChild(listItem);
-  }
-
-  // toggles display of currency information
-  function showDetails(currency) {
-    console.log(currency);
   }
 
   // function to add addEventListener
@@ -86,6 +81,35 @@ let currencyRepository = (function() {
   // creates function to return all objects in array
   function getAll() {
     return currencyList;
+  }
+
+  function loadDetails(currencyName) {
+    let url = "https://restcountries.com/v3.1/currency/" + currencyName;
+    return fetch(url).then(function (response) {
+      return response.json();
+    }).then(function (details) {
+      let countryList = [];
+      for (i = 0; i<details.length; i++) {
+        countryList.push(details[i].name.common);
+      }
+      // let currencyTitle = details[0].currencies.details[0][currencyName].name;
+      // let currencySymbol = details[0].currencies.details[0][currencyName].symbol;
+      return countryList;
+      // Now we add the details to the item
+      // item.imageUrl = details.sprites.front_default;
+      // item.height = details.height;
+      // item.types = details.types;
+
+    }).catch(function (e) {
+      console.error(e);
+    });
+  }
+
+  // toggles display of pokemon information
+  function showDetails(currencyName) {
+    loadDetails(currencyName).then(function (countryList) {
+      modalFunctions.showModal('Countries that use ' + currencyName + ' as their currency', countryList);
+    });
   }
 
   // creates search function that filters the currency array objects by exchange rate
@@ -141,3 +165,65 @@ let searchbutton = document.getElementById("searchbutton");
 searchbutton.addEventListener("click", function() {
   currencyRepository.searchList(searchbutton);
 });
+
+
+///////  MODAL   ///////
+
+let modalFunctions = (function() {
+  
+  let modalContainer = document.querySelector('#modal-container');
+  
+  function showModal(title, text) {
+    modalContainer.innerHTML = '';
+    let modal = document.createElement('div');
+    modal.classList.add('modal');
+
+    let closeButtonElement = document.createElement('button');
+    closeButtonElement.classList.add('modal-close');
+    closeButtonElement.innerText = 'Close';
+    closeButtonElement.addEventListener('click', hideModal);
+
+    let titleElement = document.createElement('h1');
+    titleElement.innerText = title;
+
+    let contentElement = document.createElement('ul');
+    let allCountries = "";
+    for (i=0; i<text.length; i++) {
+      let listItem = document.createElement('li');
+      listItem.innerText = text[i];
+      contentElement.appendChild(listItem);
+    }
+
+    modal.appendChild(closeButtonElement);
+    modal.appendChild(titleElement);
+    modal.appendChild(contentElement);
+    modalContainer.appendChild(modal);
+    
+    modalContainer.classList.add('is-visible');
+  }
+
+  function hideModal() {
+    modalContainer.classList.remove('is-visible');
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalContainer.classList.contains('is-visible')) {
+      hideModal();  
+    }
+  });
+  
+  modalContainer.addEventListener('click', (e) => {
+    // Since this is also triggered when clicking INSIDE the modal
+    // We only want to close if the user clicks directly on the overlay
+    let target = e.target;
+    if (target === modalContainer) {
+      hideModal();
+    }
+  });
+
+  return {
+    showModal: showModal
+  };
+
+  // THE RETURN STATEMENT HERE
+})();
