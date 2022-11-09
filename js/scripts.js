@@ -1,3 +1,42 @@
+///////  UX/UI Utilities   ///////
+
+let uiFunctions = (function() {
+
+
+  //// Loading Message //// 
+
+  let main = document.querySelector('main');
+  let loadingContainer = document.createElement('div');
+  let loadingTitle = document.createElement('h3');
+  let imgContainer = document.createElement('div');
+
+  loadingContainer.classList.add('loading');
+  imgContainer.classList.add('spinner');
+
+  function showLoadingMessage() {
+    loadingTitle.innerText = 'Loading';
+    imgContainer.style.backgroundImage = "url('img/loading.gif')";
+    loadingContainer.appendChild(loadingTitle);
+    loadingContainer.appendChild(imgContainer);
+    main.appendChild(loadingContainer);
+
+    loadingContainer.classList.add('visible');
+  }
+
+  function hideLoadingMessage() {
+    loadingContainer.classList.remove('visible'); 
+    setTimeout(function() {
+      main.removeChild(loadingContainer);
+    }, 2000);
+  }
+
+  return {
+    showLoadingMessage: showLoadingMessage,
+    hideLoadingMessage: hideLoadingMessage
+  };
+
+})();
+
 let currencyRepository = (function() {
 
   // sets up array of currency objects
@@ -15,9 +54,11 @@ let currencyRepository = (function() {
 
   // gets currency name and exchange rate from Vat API
   function loadList() {
+    uiFunctions.showLoadingMessage();
     return fetch(apiUrl).then(function (response) {
       return response.json(); // gets promise
     }).then(function (json) {
+      uiFunctions.hideLoadingMessage();
       let obj = json.rates; // gets data
       /* loops through object with all currencies and assigns the 
       key/value pairs to individual objects to be added to an array */
@@ -89,18 +130,20 @@ let currencyRepository = (function() {
   /* gets currency data from the REST Countries API and creates an array of 
   countries that utilize the particular currency */
   function loadDetails(currencyName) {
+    uiFunctions.showLoadingMessage();
     let url = "https://restcountries.com/v3.1/currency/" + currencyName;
     return fetch(url).then(function (response) {
       return response.json();
     }).then(function (details) {
+      uiFunctions.hideLoadingMessage();
       let countryList = [];
       for (i = 0; i<details.length; i++) {
         countryList.push(details[i].name.common);
       }
       let currencyData = {
         currencyCountries: countryList,
-        currencyTitle: details[0].currencies['' + currencyName + ''].name,
-        currencySymbol: details[0].currencies['' + currencyName + ''].symbol
+        currencyTitle: details[0].currencies[currencyName].name,
+        currencySymbol: details[0].currencies[currencyName].symbol
       }
       return currencyData;
 
