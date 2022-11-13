@@ -88,16 +88,14 @@ let currencyRepository = (function() {
 
   // adds new currency name to unordered list and makes it a button to show details
   function addListItem(currency) {
-    let listItem = document.createElement('li');
+    let listItem = document.createElement('button');
     let button = document.createElement('button');
     button.innerText = currency.name;
     button.classList.add('currency_button');
-    addEvL(button, 'click', showDetails, currency.name)
-    // button.addEventListener("click", function() {
-    //   showDetails(currency);
-    // });
-    listItem.appendChild(button);
-    currencies.appendChild(listItem);
+    button.classList.add('list-group-item');
+    button.classList.add('list-group-item-action');
+    addEvL(button, 'click', showDetails, currency.name);
+    currencies.appendChild(button);
   }
 
   // function to add addEventListener
