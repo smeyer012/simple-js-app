@@ -37,14 +37,10 @@ let uiFunctions = (function() {
 
 })();
 
-let currencyRepository = (function() {
 
-  // sets up array of currency objects
-  // let currencyList = [
-  //   {name: 'United States Dollar', code: 'USD', symbol: '\u0024', rate: 0.9673 },
-  //   {name: 'Euro', code: 'EUR', symbol: '\u20AC', rate: 1 },
-  //   {name: 'British Pound Sterling', code: 'GPB', symbol: '\u00A3', rate: 0.6088 }
-  // ];
+///////  Currency Data   ///////
+
+let currencyRepository = (function() {
 
   let currencyList = [];
   let comparisonArray = [
@@ -91,18 +87,10 @@ let currencyRepository = (function() {
     let listItem = document.createElement('button');
     let button = document.createElement('button');
     button.innerText = currency.name;
-    button.classList.add('currency_button');
-    button.classList.add('list-group-item');
-    button.classList.add('list-group-item-action');
-    addEvL(button, 'click', showDetails, currency.name);
+    button.className = 'currency_button list-group-item list-group-item-action';
+    button.setAttribute('data-toggle', 'modal');
+    button.setAttribute('data-target', '#bootstrapModal');
     currencies.appendChild(button);
-  }
-
-  // function to add addEventListener
-  function addEvL(element, event='click', function_name, parameter) {
-    element.addEventListener(event, function() {
-      function_name(parameter);
-    });
   }
 
   // checks if new currency object's keys match currencyList
@@ -150,12 +138,12 @@ let currencyRepository = (function() {
     });
   }
 
-  // accesses currency data and calls modal function with dynamic content
-  function showDetails(currencyName) {
-    loadDetails(currencyName).then(function (currencyData) {
+  // passes currency name from target button to dynamically generate details for the modal
+  $('#bootstrapModal').on('show.bs.modal', function (e) {
+    loadDetails(e.relatedTarget.innerText).then(function (currencyData) {
       modalFunctions.showModal('These are the countries that use the ' + currencyData.currencyTitle + ' (notation: ' + currencyData.currencySymbol + ') as their currency:', currencyData.currencyCountries);
     });
-  }
+  })
 
   // creates search function that filters the currency array objects by exchange rate
   function searchList(button) {
@@ -215,60 +203,23 @@ searchbutton.addEventListener("click", function() {
 ///////  MODAL   ///////
 
 let modalFunctions = (function() {
-  
-  let modalContainer = document.querySelector('#modal-container');
-  
+   
   // builds content dynamically for modal
   function showModal(title, text) {
-    modalContainer.innerHTML = '';
-    let modal = document.createElement('div');
-    modal.classList.add('modal');
 
-    let closeButtonElement = document.createElement('button');
-    closeButtonElement.classList.add('modal-close');
-    closeButtonElement.innerText = 'Close';
-    //hides modal if 'Close' link is clicked
-    closeButtonElement.addEventListener('click', hideModal);
-
-    let titleElement = document.createElement('h1');
+    let titleElement = document.getElementById('currencyName');
     titleElement.innerText = title;
 
+    let modalContent = document.getElementById('currencyData');
     let contentElement = document.createElement('ul');
     for (i=0; i<text.length; i++) {
       let listItem = document.createElement('li');
       listItem.innerText = text[i];
       contentElement.appendChild(listItem);
     }
-
-    modal.appendChild(closeButtonElement);
-    modal.appendChild(titleElement);
-    modal.appendChild(contentElement);
-    modalContainer.appendChild(modal);
+    modalContent.appendChild(contentElement);
     
-    modalContainer.classList.add('is-visible');
   }
-
-  // function to hide modal
-  function hideModal() {
-    modalContainer.classList.remove('is-visible');
-  }
-
-  // hides modal if esc is pressed
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modalContainer.classList.contains('is-visible')) {
-      hideModal();  
-    }
-  });
-  
-  // hides modal if user clicks outside of the modal window
-  modalContainer.addEventListener('click', (e) => {
-    // Since this is also triggered when clicking INSIDE the modal
-    // We only want to close if the user clicks directly on the overlay
-    let target = e.target;
-    if (target === modalContainer) {
-      hideModal();
-    }
-  });
 
   return {
     showModal: showModal
