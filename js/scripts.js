@@ -87,7 +87,7 @@ let currencyRepository = (function() {
     let listItem = document.createElement('button');
     let button = document.createElement('button');
     button.innerText = currency.name;
-    button.className = 'currency_button list-group-item list-group-item-action';
+    button.className = 'currency_button list-group-item list-group-item-action col-4';
     button.setAttribute('data-toggle', 'modal');
     button.setAttribute('data-target', '#bootstrapModal');
     currencies.appendChild(button);
