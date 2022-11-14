@@ -1,4 +1,4 @@
-# The Currency Converter - a simple-js-app
+# Currency Data - a simple-js-app
 
 ## Purpose
 
