@@ -49,14 +49,16 @@ let currencyRepository = (function() {
   let apiUrl = 'https://api.vatcomply.com/rates';
 
   // gets currency name and exchange rate from Vat API
-  function loadList() {
+  async function loadList() {
     uiFunctions.showLoadingMessage();
-    return fetch(apiUrl).then(function (response) {
-      return response.json(); // gets promise
-    }).then(function (json) {
+    try {
+      const response = await fetch(apiUrl);
+      const json = await response.json();
       uiFunctions.hideLoadingMessage();
       let obj = json.rates; // gets data
-      /* loops through object with all currencies and assigns the 
+
+
+      /* loops through object with all currencies and assigns the
       key/value pairs to individual objects to be added to an array */
       for (const property in obj) {
         let currency = {
@@ -65,22 +67,22 @@ let currencyRepository = (function() {
         };
         add(currency);
       }
-    }).catch(function (e) {
+    } catch (e) {
       console.error(e);
-    })
+    }
   }
 
   // creates function to add a currency object to the array
   function add(currency) {
     // checks that new entry is an object and tests if the keys match with the existing object
-    if (typeof currency === "object" && checkCurrencyKeys(currency, comparisonArray[0])) {
+    if (typeof currency === 'object' && checkCurrencyKeys(currency, comparisonArray[0])) {
       // adds new object to currencyList array
       currencyList.push(currency);
     }
   }
 
   // sets up HTML element to display the currency list within
-  let currencies = document.querySelector("#currencies");
+  let currencies = document.querySelector('#currencies');
 
   // adds new currency name to unordered list and makes it a button to show details
   function addListItem(currency) {
@@ -115,27 +117,27 @@ let currencyRepository = (function() {
 
   /* gets currency data from the REST Countries API and creates an array of 
   countries that utilize the particular currency */
-  function loadDetails(currencyName) {
+  async function loadDetails(currencyName) {
     uiFunctions.showLoadingMessage();
-    let url = "https://restcountries.com/v3.1/currency/" + currencyName;
-    return fetch(url).then(function (response) {
-      return response.json();
-    }).then(function (details) {
+    let url = 'https://restcountries.com/v3.1/currency/' + currencyName;
+    try {
+      const response = await fetch(url);
+      const details = await response.json();
       uiFunctions.hideLoadingMessage();
       let countryList = [];
-      for (i = 0; i<details.length; i++) {
+      // creates array of countries that accept the currency
+      for (i = 0; i < details.length; i++) {
         countryList.push(details[i].name.common);
       }
       let currencyData = {
         currencyCountries: countryList,
         currencyTitle: details[0].currencies[currencyName].name,
         currencySymbol: details[0].currencies[currencyName].symbol
-      }
+      };
       return currencyData;
-
-    }).catch(function (e) {
+    } catch (e) {
       console.error(e);
-    });
+    }
   }
 
   // passes currency name from target button to dynamically generate details for the modal
@@ -149,7 +151,7 @@ let currencyRepository = (function() {
   function searchList(button) {
 
     // sets up HTML element to display the results within
-    let searchlist = document.getElementById("searchResultList");
+    let searchlist = document.getElementById('searchResultList');
 
     // filter function
     let searchResults = currencyList.filter(function (currency) {
@@ -194,8 +196,8 @@ currencyRepository.loadList().then(function() {
 });
 
 // executes search function on click of searchbutton
-let searchbutton = document.getElementById("searchbutton");
-searchbutton.addEventListener("click", function() {
+let searchbutton = document.getElementById('searchbutton');
+searchbutton.addEventListener('click', function() {
   currencyRepository.searchList(searchbutton);
 });
 
